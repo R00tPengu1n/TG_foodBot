@@ -83,6 +83,7 @@ async def show_categories(message: types.Message, state: FSMContext):
             )
         await state.set_state(RecipeStates.waiting_for_category)
 
+
         await session.close()
 
 @router.message(RecipeStates.waiting_for_count)
