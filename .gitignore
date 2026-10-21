@@ -1,0 +1,6 @@
+venv/
+.idea/
+__pycache__/
+token_data.py
+.venv
+.env
