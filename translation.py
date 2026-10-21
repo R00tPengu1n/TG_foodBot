@@ -19,6 +19,7 @@ async def _translate_one(
     async with semaphore:
         try:
             result = await translator.translate(text, dest=TARGET_LANGUAGE)
+            print(result.src, result.dest, repr(result.text))
             return result.text
         except Exception as error:
             logger.warning("Не удалось перевести текст: %s", error)
@@ -27,7 +28,7 @@ async def _translate_one(
 async def translate_texts(texts: list[str]) -> list[str]:
     semaphore = asyncio.Semaphore(MAX_CONCURRENT_TRANSLATIONS)
 
-    async with Translator() as translator:
+    async with Translator(raise_exception=True) as translator:
         return await asyncio.gather(
             *(_translate_one(translator, text, semaphore) for text in texts)
         )
@@ -37,6 +38,7 @@ async def translate_text(text: str) -> str:
     return translated[0]
 
 async def _demo() -> None:
+    logging.basicConfig(level=logging.INFO)
     titles = ["Bread omelette", "Breakfast Potatoes", ""]
     print(await translate_texts(titles))
     print(await translate_text("Preheat the oven to 200 degrees."))
